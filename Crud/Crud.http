@@ -1,4 +1,4 @@
-@Crud_HostAddress = http://localhost:5280
+@Crud_HostAddress = http://localhost:8080
 
 GET {{Crud_HostAddress}}/Auth/
 Accept: application/json
