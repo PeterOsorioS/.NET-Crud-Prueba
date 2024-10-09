@@ -1,0 +1,338 @@
+{
+	"info": {
+		"_postman_id": "fda0499e-8405-401d-b940-6a92ac3db81d",
+		"name": "Documentación de la API CRUD .NET",
+		"description": "El proyecto consiste en un **backend** desarrollado en **C#** utilizando **.NET**, para gestionar un sistema de productos y compras. El objetivo principal es permitir a los usuarios registrarse, crear, ver, editar y eliminar productos, así como realizar compras de estos productos. La arquitectura se basa en una serie de **entidades** que representan los elementos centrales del sistema, junto con controladores que gestionan la lógica de negocio y la comunicación con la base de datos.\n\n\n### Entidades del Sistema\n\nSe han definido las siguientes entidades para el sistema:\n\n- **Product**: Representa un artículo comprable. Sus atributos incluyen:\n    \n    - `id`: Identificador único del producto.\n        \n    - `name`: Nombre del producto.\n        \n    - `category`: Categoría a la que pertenece el producto.\n        \n    - `price`: Precio del producto.\n        \n    - `quantity`: Cantidad disponible del producto.\n        \n- **ProductPurchase**: Representa el registro de compra de uno o varios productos. Sus atributos incluyen:\n    \n    - `id`: Identificador único de la compra.\n        \n    - `products`: Relación de muchos a muchos con la entidad Product.\n        \n    - `purchaseDate`: Fecha de la compra.\n        \n    - `total`: Total de la compra.\n        \n- **User**: Representa un usuario del sistema. Sus atributos incluyen:\n    \n    - `id`: Identificador único del usuario.\n        \n    - `name`: Nombre del usuario.\n        \n    - `money`: Saldo disponible del usuario.\n        \n    - `purchases`: Relación uno a muchos con la entidad ProductPurchase.\n        \n\n### Controladores\n\nLos controladores gestionan las operaciones relacionadas con los usuarios y productos. Se han implementado los siguientes controladores:\n\n- **AuthController**: Maneja el registro e inicio de sesión de los usuarios, incluyendo la validación de credenciales y la generación de tokens JWT.\n    \n- **ProductController**: Se encarga de las operaciones CRUD (Crear, Leer, Actualizar y Eliminar) de los productos en el sistema.\n    \n- **PurchaseController**: Permite a los usuarios registrar compras y listar las compras realizadas.\n    \n\n### Conclusión\n\nEste proyecto es una solución completa para gestionar productos y compras, diseñada con tecnologías modernas y prácticas de desarrollo adecuadas. El enfoque en la claridad y la simplicidad, junto con la implementación de patrones de diseño, asegura que el sistema sea mantenible y escalable a largo plazo. Si se requiere alguna mejora o modificación, estaré encantado de ayudar.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38572860"
+	},
+	"item": [
+		{
+			"name": "Autenticacion",
+			"item": [
+				{
+					"name": "Registro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"NombreDelUsuario\",         // Nombre del usuario\r\n  \"email\": \"user@gmail.com\",          // Correo electrónico del usuario\r\n  \"password\": \"stringst\",             // Contraseña del usuario\r\n  \"confirmPassword\": \"stringst\",      // Confirmación de la contraseña\r\n  \"money\": 0                          // Cantidad de dinero inicial del usuario\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7036/api/auth/register",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "- **Descripción:** Este endpoint permite a nuevos usuarios crear una cuenta en la aplicación proporcionando la información necesaria, como el nombre, correo electrónico, contraseña y una confirmación de la contraseña. También se permite establecer un saldo inicial en la cuenta del usuario.\n    \n- **Validaciones**:\n    \n    - El campo `email` debe ser único.\n        \n    - El campo `password` debe contener minimo 8 caracteres.\n        \n    - Los campos `password` y `confirmPassword` deben coincidir.\n        \n    - El campo `money` es opcional, pero si se proporciona, debe ser un valor positivo."
+					},
+					"response": []
+				},
+				{
+					"name": "Inicio sesion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@gmail.com\",      // Correo electrónico del usuario\r\n  \"password\": \"stringst\"          // Contraseña del usuario\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7036/api/auth/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "- **Descripción:** Este endpoint permite a los usuarios registrados iniciar sesión proporcionando su correo electrónico y contraseña. Si las credenciales son correctas, se devuelve un token JWT (JSON Web Token) que será utilizado para autenticar solicitudes a otros endpoints protegidos.\n    \n- **Validaciones**:\n    \n    - El campo `email` debe estar presente y no debe estar vacío.\n        \n    - El `email` debe tener un formato válido, es decir, debe seguir el formato estándar de correos electrónicos (por ejemplo, `usuario@ejemplo.com`).\n        \n    - El campo `password` debe estar presente y no debe estar vacío."
+					},
+					"response": []
+				}
+			],
+			"description": "El controlador de autenticación gestiona las operaciones relacionadas con el registro e inicio de sesión de los usuarios en la aplicación. Este controlador maneja dos funciones principales:\n\n1. **Registro de Usuarios (Register)**: Permite a los nuevos usuarios crear una cuenta proporcionando un nombre, correo electrónico, contraseña y una confirmación de contraseña. Además, se puede definir un saldo inicial de dinero.\n    \n2. **Inicio de Sesión (Login)**: Verifica las credenciales de los usuarios registrados. Al ingresar el correo y contraseña correctos, se devuelve un token JWT (JSON Web Token) que se utilizará para autenticar futuras solicitudes en otros endpoints protegidos de la aplicación.\n    \n\nEl controlador asegura que:\n\n- No se registren usuarios con correos duplicados.\n    \n- Las contraseñas estén correctamente validadas (la confirmación debe coincidir con la contraseña).\n    \n- Se generen y devuelvan tokens de autenticación válidos para los usuarios que inician sesión con éxito.\n    \n\n**Principales Endpoints:**\n\n- `POST /api/auth/register`: Registra un nuevo usuario.\n    \n- `POST /api/auth/login:` Inicia sesión y devuelve un token de autenticación.\n    \n\nEste controlador utiliza JWT para proteger rutas sensibles, requiriendo que los usuarios inicien sesión para obtener acceso a ciertos recursos dentro de la API."
+		},
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Obtener productos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7036/api/products",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"products"
+							]
+						},
+						"description": "- **Descripción**: Este método recupera una lista de todos los productos disponibles en la base de datos."
+					},
+					"response": []
+				},
+				{
+					"name": "Crear producto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"product1\",          // Nombre del producto\r\n  \"category\": \"category1\",     // Categoría del producto\r\n  \"price\": 200,                // Precio del producto\r\n  \"quantity\": 1                // Cantidad disponible del producto\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7036/api/products",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"products"
+							]
+						},
+						"description": "- **Descripción**: Este método permite crear un nuevo producto en la base de datos. Se debe proporcionar un objeto de producto que contenga el nombre, categoría, precio y cantidad.\n- **Cuerpo de la Solicitud**: Debe incluir un objeto JSON con los detalles del nuevo producto."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener producto por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7036/api/products/{ID}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"products",
+								"{ID}"
+							]
+						},
+						"description": "- **Descripción**: Este método recupera los detalles de un producto específico, utilizando su ID como parámetro de entrada.\n    \n- **Parámetros**:\n    \n    - `id`: ID del producto que se desea recuperar."
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar producto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"product1\",          // Nombre del producto\r\n  \"category\": \"category1\",     // Categoría del producto\r\n  \"price\": 200,                // Precio del producto\r\n  \"quantity\": 1                // Cantidad disponible del producto\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7036/api/products/{ID}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"products",
+								"{ID}"
+							]
+						},
+						"description": "- **Descripción**: Este método permite actualizar un producto existente en la base de datos. Se debe proporcionar el ID del producto y un objeto de producto con los nuevos datos.\n    \n- **Parámetros**:\n    - `id`: ID del producto que se desea actualizar.\n        \n- **Cuerpo de la Solicitud**: Debe incluir un objeto JSON con los detalles actualizados del producto."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar producto",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7036/api/products/{ID}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"products",
+								"{ID}"
+							]
+						},
+						"description": "- **Descripción**: Este método permite eliminar un producto específico de la base de datos utilizando su ID.\n- **Parámetros**:\n  - `id`: ID del producto que se desea eliminar."
+					},
+					"response": []
+				}
+			],
+			"description": "El controlador de productos gestiona las operaciones relacionadas con la creación, actualización, consulta y eliminación de productos en la aplicación. Este controlador maneja varias funciones esenciales para la administración de productos dentro del sistema.\n\n## Funciones principales:\n\n1. **Obtener todos los productos**: Permite recuperar la lista de todos los productos disponibles en la base de datos.\n    \n2. **Obtener un producto por ID**: Recupera los detalles de un producto específico, identificado por su ID.\n    \n3. **Crear un nuevo producto**: Permite añadir nuevos productos proporcionando información como el nombre, categoría, precio y cantidad.\n    \n4. **Actualizar un producto existente**: Permite modificar los datos de un producto existente mediante su ID.\n    \n5. **Eliminar un producto**: Permite eliminar un producto específico de la base de datos utilizando su ID.\n    \n\n## El controlador asegura que:\n\n- Los productos se puedan crear con los datos esenciales, como el nombre, categoría, precio y cantidad disponibles.\n    \n- Los usuarios autenticados puedan realizar las operaciones mencionadas.\n    \n- Las operaciones que actualizan o eliminan productos se realicen correctamente mediante la identificación única del producto.\n    \n\n## Principales Endpoints:\n\n- **GET** `/api/products`: Recupera todos los productos disponibles.\n    \n- **GET** `/api/products/{id}`: Recupera un producto específico por su ID.\n    \n- **POST** `/api/products`: Crea un nuevo producto.\n    \n- **PUT** `/api/products/{id}`: Actualiza un producto existente.\n    \n- **DELETE** `/api/products/{id}`: Elimina un producto por ID.\n    \n\nEste controlador utiliza JWT para acceder a estos recursos, protegiendo las rutas sensibles como la creación, actualización y eliminación de productos dentro de la API."
+		},
+		{
+			"name": "Compras",
+			"item": [
+				{
+					"name": "Obtener compras",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7036/api/purchases",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"purchases"
+							]
+						},
+						"description": "- **Descripción**: Este método recupera una lista de todas las compras realizadas en la base de datos. "
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar compra",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"products\": [\r\n    {\r\n      \"id\": 0,                  // ID  del producto\r\n      \"name\": \"string\",         // Nombre del producto\r\n      \"category\": \"string\",     // Categoría del producto\r\n      \"price\": 0,               // Precio del producto\r\n      \"quantity\": 0             // Cantidad disponible del producto\r\n    }\r\n  ],\r\n  \"userID\": 0                   // ID del usuario\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7036/api/purchases",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"purchases"
+							]
+						},
+						"description": "**Descripción**: Este método permite crear un nuevo registro de compra. Se debe proporcionar un objetoque contenga la información de la compra, incluyendo los productos comprados y el usuario que realiza la compra.\n\n- **Cuerpo de la Solicitud**: Debe incluir un objeto JSON con los detalles de la compra."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener compra por ID usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer Tu_Token_Aqui",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7036/api/purchases/{userId}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7036",
+							"path": [
+								"api",
+								"purchases",
+								"{userId}"
+							]
+						},
+						"description": "- **Descripción**: Este método recupera todas las compras realizadas por un usuario específico, utilizando su ID como parámetro de entrada.\n- **Parámetros**:\n  - `userId`: ID del usuario cuyas compras se desean recuperar."
+					},
+					"response": []
+				}
+			],
+			"description": "El controlador de compras gestiona las operaciones relacionadas con la compra de productos en la aplicación. Este controlador maneja varias funciones esenciales para la gestión de las compras dentro del sistema.\n\n## Funciones principales:\n- **Obtener todas las compras**: Permite recuperar la lista de todas las compras realizadas en la base de datos.\n- **Crear una nueva compra**: Permite registrar una compra nueva proporcionando la información necesaria sobre los productos adquiridos y el usuario que realiza la compra.\n- **Obtener compras por ID de usuario**: Recupera el historial de compras realizadas por un usuario específico, identificado por su ID.\n\nEl controlador asegura que:\n- Las compras se puedan crear con la información esencial, como los productos adquiridos y el usuario correspondiente.\n- Los usuarios autenticados puedan realizar las operaciones mencionadas.\n- Se mantenga un registro adecuado de las compras realizadas por cada usuario.\n\n## Principales Endpoints:\n- `GET /api/purchases`: Recupera todas las compras realizadas.\n- `POST /api/purchases`: Crea una nueva compra.\n- `GET /api/purchases/{userId}`: Recupera las compras realizadas por un usuario específico.\n\nEste controlador utiliza JWT para acceder a estos recursos, protegiendo las rutas sensibles como la creación de nuevas compras dentro de la API."
+		}
+	]
+}
